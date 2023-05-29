@@ -91,9 +91,7 @@ function BoardShow(props) {
               return (
                 <tr
                   onClick={() => {
-                    this.props.history.push({
-                      pathname: `/${board.boardId}`,
-                    });
+                    nav(`/${board.boardId}`);
                   }}
                   key={`tr_${board.boardId}`}>
                   <td key={`boardId_${board.boardId}`}>{board.boardId}</td>
