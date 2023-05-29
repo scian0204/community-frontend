@@ -1,15 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Post(props) {
   const { post } = props;
+  const writeDate = new Date(parseInt(post.writeDate)).toLocaleDateString();
+  const nav = useNavigate();
+
   return (
-    <tr onClick={() => {}} key={`1${post}`}>
-      <td key={`2${post}`}>{post}</td>
-      <td key={`3${post}`}>{post}</td>
-      <td key={`4${post}`}>{post}</td>
-      <td key={`5${post}`}>{post}</td>
-      <td key={`6${post}`}>{post}</td>
-      <td key={`7${post}`}>{post}</td>
+    <tr
+      onClick={() => {
+        nav(`/PostShow/${post.postId}`);
+      }}
+      key={`${post.postId}`}>
+      <td key={`${post.postId}_postId`}>{post.postId}</td>
+      <td key={`${post.postId}_title`}>{post.title}</td>
+      <td key={`${post.postId}_userId`}>{post.userId}</td>
+      <td key={`${post.postId}_writeDate`}>{writeDate}</td>
+      <td key={`${post.postId}_viewCount`}>{post.viewCount}</td>
+      <td key={`${post.postId}_recommend`}>{post.recommend}</td>
     </tr>
   );
 }

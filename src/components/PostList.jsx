@@ -1,11 +1,75 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Post from './Post';
+import Request from '../Request';
 
 function PostList(props) {
   const { boardId, isProfile, isSearch } = props;
-  const [postList, setPostList] = useState([1, 2, 3, 4]);
+  const [postList, setPostList] = useState([]);
   const [isRecmd, setIsRecmd] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFirst, setIsFirst] = useState(true);
+  const [isLast, setIsLast] = useState(false);
+  const [totalPage, setTotalPage] = useState([]);
+
+  useEffect(() => {
+    setIsLoading(false);
+    if (boardId == null) {
+      Request.get(
+        `http://localhost:8080/api/post/list?page=${currentPage - 1}&size=10`
+      ).then((res) => {
+        setPostList(res.data.data.content);
+        setIsFirst(res.data.data.first);
+        setIsLast(res.data.data.last);
+        setTotalPage(res.data.data.totalPages);
+        setIsLoading(true);
+      });
+    } else {
+      Request.get(
+        `http://localhost:8080/api/post/list/${boardId}?page=${
+          currentPage - 1
+        }&size=10`
+      ).then((res) => {
+        setPostList(res.data.data.content);
+        setIsFirst(res.data.data.first);
+        setIsLast(res.data.data.last);
+        setTotalPage(res.data.data.totalPages);
+        setIsLoading(true);
+      });
+    }
+  }, [currentPage, boardId]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [boardId]);
+
+  const numberToArray = (num) => {
+    const arr = [];
+    for (let i = 1; i <= num; i++) {
+      arr.push(i);
+    }
+    return arr;
+  };
+
+  const toFirst = () => {
+    setCurrentPage(1);
+  };
+
+  const toPrePage = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  const toPage = (e) => {
+    setCurrentPage(e.target.innerText);
+  };
+
+  const toNextPage = () => {
+    setCurrentPage(parseInt(currentPage) + 1);
+  };
+
+  const toLast = () => {
+    setCurrentPage(totalPage);
+  };
 
   return (
     <div>
@@ -48,45 +112,81 @@ function PostList(props) {
               <th scope="col">추천수</th>
             </tr>
           </thead>
-          <tbody>
-            {postList.map((post) => (
-              <Post key={post} post={post} />
-            ))}
-          </tbody>
+          {isLoading ? (
+            <tbody>
+              {postList.map((post) => (
+                <Post key={post.postId} post={post} />
+              ))}
+            </tbody>
+          ) : (
+            <tbody></tbody>
+          )}
         </table>
         <nav aria-label="Page navigation example">
           <ul className="pagination justify-content-center">
-            <ul className="pagination justify-content-center">
-              <li className="page-item">
-                <button className="page-link">처음</button>
-              </li>
-              <li className="page-item">
-                <button className="page-link">이전</button>
-              </li>
-            </ul>
-            <li key={1} className="page-item active">
-              <button key={1} className="page-link">
-                {1}
-              </button>
-            </li>
-            <li key={2} className="page-item">
-              <button key={2} className="page-link">
-                {2}
-              </button>
-            </li>
-            <li key={3} className="page-item">
-              <button key={3} className="page-link">
-                {3}
-              </button>
-            </li>
-            <ul className="pagination justify-content-center">
-              <li className="page-item">
-                <button className="page-link">다음</button>
-              </li>
-              <li className="page-item">
-                <button className="page-link">마지막</button>
-              </li>
-            </ul>
+            {isFirst ? (
+              <ul className="pagination justify-content-center">
+                <li className="page-item disabled">
+                  <button className="page-link">처음</button>
+                </li>
+                <li className="page-item disabled">
+                  <button className="page-link">이전</button>
+                </li>
+              </ul>
+            ) : (
+              <ul className="pagination justify-content-center">
+                <li className="page-item">
+                  <button onClick={toFirst} className="page-link">
+                    처음
+                  </button>
+                </li>
+                <li className="page-item">
+                  <button onClick={toPrePage} className="page-link">
+                    이전
+                  </button>
+                </li>
+              </ul>
+            )}
+            {numberToArray(totalPage).map((i) => (
+              <div key={i}>
+                {currentPage == i ? (
+                  <li key={i} className="page-item active">
+                    <button key={i} className="page-link">
+                      {i}
+                    </button>
+                  </li>
+                ) : (
+                  <li key={i} className="page-item">
+                    <button onClick={toPage} key={i} className="page-link">
+                      {i}
+                    </button>
+                  </li>
+                )}
+              </div>
+            ))}
+            {isLast ? (
+              <ul className="pagination justify-content-center">
+                <li className="page-item disabled">
+                  <button className="page-link">다음</button>
+                </li>
+                <li className="page-item disabled">
+                  <button className="page-link">마지막</button>
+                </li>
+              </ul>
+            ) : (
+              <ul className="pagination justify-content-center">
+                <li className="page-item">
+                  <button onClick={toNextPage} className="page-link">
+                    다음
+                  </button>
+                </li>
+                <li className="page-item">
+                  <button onClick={toLast} className="page-link">
+                    마지막
+                  </button>
+                </li>
+              </ul>
+            )}
           </ul>
         </nav>
       </div>
