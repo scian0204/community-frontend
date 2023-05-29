@@ -8,15 +8,22 @@ import Form from './routes/Form';
 import PostShow from './routes/PostShow';
 import Profile from './routes/Profile';
 import Search from './routes/Search';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UserContext from './context/UserContext';
+import Request from './Request';
 
 function App() {
-  const [userId, setUserId] = useState(null);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    Request.get('http://localhost:8080/api/user/isLogin').then((res) => {
+      setUserData(res.data.data);
+    });
+  }, []);
 
   return (
     <div className="App">
-      <UserContext.Provider value={{ userId, setUserId }}>
+      <UserContext.Provider value={{ userData, setUserData }}>
         <BrowserRouter>
           <div className="container-fluid">
             {/* <h3>{this.props.checkIsLogin ? "True" : "false"}</h3> */}
@@ -35,14 +42,14 @@ function App() {
               </div>
             </div>
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/:boardId" element={<Home />} />
-              <Route path="/BoardApprove" element={<BoardApprove />} />
-              <Route path="/BoardShow" element={<BoardShow />} />
-              <Route path="/Form/" element={<Form />} />
-              <Route path="/PostShow" element={<PostShow />} />
-              <Route path="/Profile" element={<Profile />} />
-              <Route path="/Search" element={<Search />} />
+              <Route refresh path="/" element={<Home />} />
+              <Route refresh path="/:boardId" element={<Home />} />
+              <Route refresh path="/BoardApprove" element={<BoardApprove />} />
+              <Route refresh path="/BoardShow" element={<BoardShow />} />
+              <Route refresh path="/Form/:form" element={<Form />} />
+              <Route refresh path="/PostShow/:postId" element={<PostShow />} />
+              <Route refresh path="/Profile/:userId" element={<Profile />} />
+              <Route refresh path="/Search/:query" element={<Search />} />
             </Routes>
           </div>
         </BrowserRouter>
