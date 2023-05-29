@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Board from './Board';
+import Request from '../Request';
 
 function BoardList(props) {
-  const [boardList, setBoardList] = useState([1, 2, 3, 4]);
+  const { boardId } = props;
+  const [boardList, setBoardList] = useState([]);
+  const [currentBoard, setCurrentBoard] = useState();
+
+  useEffect(() => {
+    Request.get(`http://localhost:8080/api/board/listByRank`).then((res) => {
+      setBoardList(res.data.data);
+    });
+    if (boardId != undefined) {
+      Request.get(`http://localhost:8080/api/board/${boardId}`).then((res) => {
+        setCurrentBoard(res.data.data);
+      });
+    } else {
+      setCurrentBoard(null);
+    }
+  }, [boardId]);
 
   return (
     <div>
@@ -28,10 +44,22 @@ function BoardList(props) {
             </button>
           )}
         </div>
+        {currentBoard && (
+          <div>
+            <hr />
+            <p>현재 게시판 :</p>
+            <button
+              className="list-group-item list-group-item-action"
+              disabled={true}>
+              {currentBoard.boardName}
+            </button>
+          </div>
+        )}
         <hr />
+        <p>인기 게시판 :</p>
         <div className="list-group">
           {boardList.map((board) => (
-            <Board key={board} board={board} />
+            <Board key={board[0]} board={board} />
           ))}
         </div>
       </div>
