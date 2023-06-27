@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Board from './Board';
 import Request from '../Request';
+import UserContext from '../context/UserContext';
 
 function BoardList(props) {
   const { boardId } = props;
+  const {userData} = useContext(UserContext);
   const [boardList, setBoardList] = useState([]);
   const [currentBoard, setCurrentBoard] = useState();
 
@@ -30,8 +32,8 @@ function BoardList(props) {
               게시판 전체 보기
             </button>
           </Link>
-          {false ? (
-            <Link to={{ pathname: '/Form' }}>
+          {userData != null ? (
+            <Link to={{ pathname: '/BoardForm' }}>
               <button className="list-group-item list-group-item-action">
                 게시판 요청하기
               </button>

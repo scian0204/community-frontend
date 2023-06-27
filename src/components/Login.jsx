@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function Login(props) {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const { setUserData } = useContext(UserContext);
+  const { setUserData, setIsAdmin } = useContext(UserContext);
   const nav = useNavigate();
 
   const handleUserId = (e) => {
@@ -28,7 +28,8 @@ function Login(props) {
         if (res.data.error != null) {
           alert(res.data.error.message);
         } else {
-          setUserData(res.data.data);
+          setUserData(res.data.data.userId);
+          setIsAdmin(res.data.data.isAdmin);
         }
       });
     }

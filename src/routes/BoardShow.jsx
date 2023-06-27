@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Request from '../Request';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Paging from '../components/Paging';
+import UserContext from '../context/UserContext';
 
 function BoardShow(props) {
   const [boardList, setBoardList] = useState([]);
@@ -11,6 +12,8 @@ function BoardShow(props) {
   const [isLast, setIsLast] = useState(false);
   const [totalPage, setTotalPage] = useState();
   const [isSearch, setIsSearch] = useState(props.query!=null);
+
+  const {userData} = useContext(UserContext);
 
   const nav = useNavigate();
 
@@ -38,7 +41,7 @@ function BoardShow(props) {
         setIsLoading(true);
       });
     }
-  }, [currentPage]);
+  }, [currentPage, useParams()]);
 
   const numberToArray = (num) => {
     const arr = [];
@@ -68,12 +71,22 @@ function BoardShow(props) {
     setCurrentPage(totalPage);
   };
 
+  const deleteBoard = (boardId) => {
+    Request.delete(`http://localhost:8080/api/board/delete/${boardId}`).then(res=>{
+      if (res.data.error == null) {
+        nav('/BoardShow')
+      }else {
+        alert(res.data.error.message);
+      }
+    })
+  }
+
   return (
     <div>
       <div id="bdr" style={{ border: '1px solid blue', padding: '10px' }}>
         <div id="btns">
-          {isSearch ? null : false ? (
-            <Link to={{ pathname: '/form' }}>
+          {isSearch ? null : userData != null ? (
+            <Link to={{ pathname: '/BoardForm' }}>
               <button className="btn btn-primary">게시판 요청</button>
             </Link>
           ) : (
@@ -98,6 +111,7 @@ function BoardShow(props) {
               <th scope="col">이름</th>
               <th scope="col">만든 유저</th>
               <th scope="col">등록일</th>
+              {userData&& <th scope='col'> </th>}
             </tr>
           </thead>
           <tbody>
@@ -114,6 +128,9 @@ function BoardShow(props) {
                   <td key={`regDate_${board.boardId}`}>
                     {new Date(parseInt(board.regDate)).toLocaleDateString()}
                   </td>
+                  {userData == board.userId &&
+                    <td><button onClick={()=>{deleteBoard(board.boardId)}} className='btn btn-danger'>삭제</button></td>
+                  }
                 </tr>
               );
             })}

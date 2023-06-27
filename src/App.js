@@ -12,19 +12,26 @@ import UserContext from './context/UserContext';
 import Request from './Request';
 import PostForm from './routes/PostForm';
 import UserForm from './routes/UserForm';
+import BoardForm from './routes/BoardForm';
 
 function App() {
   const [userData, setUserData] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     Request.get('http://localhost:8080/api/user/isLogin').then((res) => {
       setUserData(res.data.data);
     });
+    Request.get('http://localhost:8080/api/user/isAdmin').then((res) => {
+      console.log(res.data.data);
+      setIsAdmin(res.data.data);
+    });
   }, []);
 
   return (
     <div className="App">
-      <UserContext.Provider value={{ userData, setUserData }}>
+      <UserContext.Provider
+        value={{ userData, setUserData, isAdmin, setIsAdmin }}>
         <BrowserRouter>
           <div className="container-fluid">
             {/* <h3>{this.props.checkIsLogin ? "True" : "false"}</h3> */}
@@ -49,6 +56,7 @@ function App() {
               <Route refresh path="/BoardShow" element={<BoardShow />} />
               <Route refresh path="/PostForm/:boardId" element={<PostForm />} />
               <Route refresh path="/UserForm/" element={<UserForm />} />
+              <Route refresh path="/BoardForm/" element={<BoardForm />} />
               <Route refresh path="/PostShow/:postId" element={<PostShow />} />
               <Route refresh path="/Profile/:userId" element={<Profile />} />
               <Route refresh path="/Search/:query" element={<Search />} />
