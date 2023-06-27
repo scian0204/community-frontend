@@ -28,11 +28,37 @@ function PostShow(props) {
           alert('글 삭제됨');
           nav(-1);
         } else {
-          alert(res.data.error.meesage);
+          alert(res.data.error.message);
         }
       }
     );
   };
+
+  const recmdPost = () => {
+    Request.get(`http://localhost:8080/api/post/recmd/${postId}`).then(res=>{
+      if (res.data.error == null) {
+        setPost(res.data.data);
+      } else {
+        if(res.data.error.errorId == 1) alert(res.data.error.message);
+        else {
+          let deRecmd = window.confirm("이미 추천함. 취소?");
+          if (deRecmd) {
+            deRecmdPost();
+          }
+        }
+      }
+    })
+  }
+
+  const deRecmdPost = () => {
+    Request.delete(`http://localhost:8080/api/post/recmd/${postId}`).then(res=>{
+      if (res.data.error == null) {
+        setPost(res.data.data);
+      } else {
+        alert(res.data.error.message);
+      }
+    })
+  }
 
   return (
     <div>
@@ -101,12 +127,11 @@ function PostShow(props) {
           <br />
           <div style={{ textAlign: 'center' }} className="center-block">
             <h5>{post.recommend}</h5>
-            <button style={{ textAlign: 'center' }} className="btn btn-primary">
-              추천{' '}
-            </button>
-            <button style={{ textAlign: 'center' }} className="btn btn-warning">
-              비추{' '}
-            </button>
+            {userData != null && 
+              <button onClick={recmdPost} style={{ textAlign: 'center' }} className="btn btn-primary">
+                추천{' '}
+              </button>
+            }
           </div>
           <br />
           <br />
