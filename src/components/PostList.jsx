@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Post from './Post';
 import Request from '../Request';
+import UserContext from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 function PostList(props) {
   const { boardId, isProfile, isSearch } = props;
@@ -11,6 +13,10 @@ function PostList(props) {
   const [isFirst, setIsFirst] = useState(true);
   const [isLast, setIsLast] = useState(false);
   const [totalPage, setTotalPage] = useState([]);
+
+  const nav = useNavigate();
+
+  const {userData} = useContext(UserContext);
 
   useEffect(() => {
     setIsLoading(false);
@@ -76,27 +82,28 @@ function PostList(props) {
       <div id="bdr" style={{ border: '1px solid blue', padding: '10px' }}>
         {!(isProfile || isSearch) ? (
           <div id="btns">
+            <div>
             {!isRecmd ? (
-              <div>
-                <button className="btn btn-primary">일반글</button>
+              <>
+              <button className="btn btn-primary">일반글</button>
                 <button onClick={null} className="btn btn-outline-success">
                   인기글
                 </button>
-                <div className="float-right">
-                  <button className="btn btn-secondary">글쓰기</button>
-                </div>
-              </div>
+              </>
             ) : (
-              <div>
+              <>
                 <button onClick={null} className="btn btn-outline-primary">
                   일반글
                 </button>
                 <button className="btn btn-success">인기글</button>
-                <div className="float-right">
-                  <button className="btn btn-secondary">글쓰기</button>
-                </div>
-              </div>
+              </>
             )}
+            <div className="float-right">
+              {(userData != null && boardId != null) &&
+                <button onClick={()=>nav(`/PostForm/${boardId}`)} className="btn btn-secondary">글쓰기</button>
+              }
+            </div>
+            </div>
           </div>
         ) : (
           ''

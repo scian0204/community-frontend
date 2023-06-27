@@ -19,7 +19,7 @@ function PostShow(props) {
       setPost(res.data.data);
       setIsLoading(true);
     });
-  }, [useParams()]);
+  }, [postId]);
 
   const deletePost = () => {
     Request.delete(`http://localhost:8080/api/post/delete/${postId}`).then(
@@ -67,7 +67,13 @@ function PostShow(props) {
                   className="btn btn-danger float-right">
                   삭제
                 </button>
-                <button className="btn btn-warning float-right">수정</button>
+                <button onClick={()=>{
+                  nav(`/PostForm/${post.boardId}`, {state: {
+                    postId: postId,
+                    title: post.title,
+                    content: post.content
+                  }})
+                }} className="btn btn-warning float-right">수정</button>
               </div>
             )}
           </div>
