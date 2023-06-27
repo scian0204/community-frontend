@@ -6,7 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import Paging from './Paging';
 
 function PostList(props) {
-  const { boardId, isProfile, isSearch } = props;
+  const { boardId } = props;
+  const [isSearch, setIsSearch] = useState(props.query != null);
+  const [isProfile, setIsProfile] = useState(false);
   const [postList, setPostList] = useState([]);
   const [isRecmd, setIsRecmd] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,7 +39,7 @@ function PostList(props) {
       });
     } else if (boardId == null) {
       Request.get(
-        `http://localhost:8080/api/post/list?page=${currentPage - 1}&size=10`
+        `http://localhost:8080/api/post/${isRecmd?"recmdList":"list"}?page=${currentPage - 1}&size=10`
       ).then((res) => {
         setPostList(res.data.data.content);
         setIsFirst(res.data.data.first);
@@ -47,7 +49,7 @@ function PostList(props) {
       });
     } else {
       Request.get(
-        `http://localhost:8080/api/post/list/${boardId}?page=${
+        `http://localhost:8080/api/post/${isRecmd?"recmdList":"list"}/${boardId}?page=${
           currentPage - 1
         }&size=10`
       ).then((res) => {
@@ -58,7 +60,7 @@ function PostList(props) {
         setIsLoading(true);
       });
     }
-  }, [currentPage, boardId]);
+  }, [currentPage, boardId, isRecmd]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -98,21 +100,12 @@ function PostList(props) {
         {!(isProfile || isSearch) ? (
           <div id="btns">
             <div>
-            {!isRecmd ? (
-              <>
-              <button className="btn btn-primary">일반글</button>
-                <button onClick={null} className="btn btn-outline-success">
-                  인기글
-                </button>
-              </>
-            ) : (
-              <>
-                <button onClick={null} className="btn btn-outline-primary">
-                  일반글
-                </button>
-                <button className="btn btn-success">인기글</button>
-              </>
-            )}
+              <button onClick={()=>setIsRecmd(false)} className={`btn btn-${isRecmd?"outline-":""}primary`}>
+                일반글
+              </button>
+              <button onClick={()=>setIsRecmd(true)} className={`btn btn-${!isRecmd?"outline-":""}success`}>
+                인기글
+              </button>
             <div className="float-right">
               {(userData != null && boardId != null) &&
                 <button onClick={()=>nav(`/PostForm/${boardId}`)} className="btn btn-secondary">글쓰기</button>
