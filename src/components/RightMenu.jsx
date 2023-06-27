@@ -14,6 +14,7 @@ function RightMenu(props) {
 
   return (
     <div style={{ border: '1px solid blue', padding: '10px' }}>
+      <h2>Hello {userData}!</h2>
       <Link to={`/Profile/${userData}`}>
         <button className="btn btn-primary">프로필</button>
       </Link>

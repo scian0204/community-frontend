@@ -7,23 +7,10 @@ import UserList from '../components/UserList';
 
 function Search(props) {
   const {query} = useParams();
-  const [isLoading, setIsLoading] = useState(false);
   const [pMode, setPMode] = useState('board');
   const [users, setUsers] = useState([]);
 
-  useEffect(()=>{
-    Request.get(`http://localhost:8080/api/user/listByLike/${query}?page=${0}&size=10`).then(res=>{
-      if(res.data.error == null) {
-        setUsers(res.data.data.content);
-        setIsLoading(true);
-      }else {
-        alert(res.data.error.message)
-      }
-    });
-  }, [query]);
-
   return (
-    !isLoading ? <h1>now loading...</h1> : 
     <div className="jumbotron">
       <br /> 
       <h2 className="display-4">검색어 : {query}</h2>
@@ -47,7 +34,7 @@ function Search(props) {
               <PostList query={query}/>
             : 
             pMode == 'user' &&
-              <UserList users={users} />
+              <UserList query={query} />
             }
         </div>
       </div>

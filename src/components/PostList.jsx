@@ -3,6 +3,7 @@ import Post from './Post';
 import Request from '../Request';
 import UserContext from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import Paging from './Paging';
 
 function PostList(props) {
   const { boardId, isProfile, isSearch } = props;
@@ -143,73 +144,18 @@ function PostList(props) {
             <tbody></tbody>
           )}
         </table>
-        <nav aria-label="Page navigation example">
-          <ul className="pagination justify-content-center">
-            {isFirst ? (
-              <ul className="pagination justify-content-center">
-                <li className="page-item disabled">
-                  <button className="page-link">처음</button>
-                </li>
-                <li className="page-item disabled">
-                  <button className="page-link">이전</button>
-                </li>
-              </ul>
-            ) : (
-              <ul className="pagination justify-content-center">
-                <li className="page-item">
-                  <button onClick={toFirst} className="page-link">
-                    처음
-                  </button>
-                </li>
-                <li className="page-item">
-                  <button onClick={toPrePage} className="page-link">
-                    이전
-                  </button>
-                </li>
-              </ul>
-            )}
-            {numberToArray(totalPage).map((i) => (
-              <div key={i}>
-                {currentPage == i ? (
-                  <li key={i} className="page-item active">
-                    <button key={i} className="page-link">
-                      {i}
-                    </button>
-                  </li>
-                ) : (
-                  <li key={i} className="page-item">
-                    <button onClick={toPage} key={i} className="page-link">
-                      {i}
-                    </button>
-                  </li>
-                )}
-              </div>
-            ))}
-            {isLast ? (
-              <ul className="pagination justify-content-center">
-                <li className="page-item disabled">
-                  <button className="page-link">다음</button>
-                </li>
-                <li className="page-item disabled">
-                  <button className="page-link">마지막</button>
-                </li>
-              </ul>
-            ) : (
-              <ul className="pagination justify-content-center">
-                <li className="page-item">
-                  <button onClick={toNextPage} className="page-link">
-                    다음
-                  </button>
-                </li>
-                <li className="page-item">
-                  <button onClick={toLast} className="page-link">
-                    마지막
-                  </button>
-                </li>
-              </ul>
-            )}
-          </ul>
-        </nav>
+        <Paging
+          isFirst={isFirst}
+          toFirst={toFirst}
+          toPrePage={toPrePage}
+          totalPage={totalPage}
+          currentPage={currentPage}
+          toPage={toPage}
+          isLast={isLast}
+          toNextPage={toNextPage}
+          toLast={toLast}
+          numberToArray={numberToArray}
+        />
       </div>
     </div>
   );
