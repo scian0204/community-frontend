@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import UserContext from '../context/UserContext';
+import Request from '../Request';
+import Comment from './Comment';
 
 function Cmt(props) {
   const { comment } = props;
   const [isProfile, setIsProfile] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const nav = useNavigate();
+
+  const {userData} = useContext(UserContext);
+
   const circleStyle = {
     width: '30px',
     height: '30px',
@@ -12,6 +20,17 @@ function Cmt(props) {
     borderRadius: '700px',
     backgroundColor: 'gray',
   };
+
+  const deleteCmt = () => {
+    Request.delete(`http://localhost:8080/api/comment/delete/${comment.commentId}`).then(res=>{
+      if (res.data.error == null) {
+        alert('댓글 삭제됨');
+        nav(`/PostShow/${comment.postId}`);
+      } else {
+        alert(res.data.error.message);
+      }
+    })
+  }
 
   return (
     <div key={comment.commentId}>
@@ -33,18 +52,19 @@ function Cmt(props) {
             />
             &nbsp;{comment.userId}
           </Link>
-          {/* // <% if(isLogin) { %>
-              // <% if(rs.getString("userid").equals(session.getAttribute("uid")) || session.getAttribute("isAdmin") != null) { %>
-              //   <div className="float-right">
-              //     <a className="btn btn-danger" href="delete.jsp?tableName=comment&id=<%= rs.getInt(1) %>">����</a> 
-              //     <a className="btn btn-warning" href="update.jsp?tableName=comment&id=<%= rs.getInt(1) %>">����</a> 
-              //   </div>
-              // <% } %>
-              // <% } %> */}
+          {userData == comment.userId &&
+            <div className='float-right'>
+              <button onClick={()=>setIsUpdate(!isUpdate)} className='btn btn-warning'>{isUpdate ? "취소" : "수정"}</button>
+              <button onClick={deleteCmt} className='btn btn-danger'>삭제</button>
+            </div>
+          }
         </div>
         <div className="card-body">
           <blockquote className="blockquote mb-0">
-            <p>{comment.comment}</p>
+            {isUpdate ?
+              <Comment preCmt={comment.comment} postId={comment.postId} commentId={comment.commentId} setIsUpdate={setIsUpdate} /> :
+              <p>{comment.comment}</p>
+            }
             <footer className="blockquote-footer">
               <cite title="Source Title">
                 {new Date(parseInt(comment.writeDate)).toLocaleDateString()}

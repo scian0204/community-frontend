@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Request from '../Request';
 import Cmt from './Cmt';
+import { useParams } from 'react-router-dom';
 
 function CmtList(props) {
   const [commentList, setCommentList] = useState([]);
@@ -24,7 +25,7 @@ function CmtList(props) {
       setTotalPage(res.data.data.totalPages);
       setIsLoading(true);
     });
-  }, [currentPage]);
+  }, [currentPage, useParams()]);
 
   const numberToArray = (num) => {
     const arr = [];

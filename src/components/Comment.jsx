@@ -4,35 +4,48 @@ import Request from '../Request';
 import { useNavigate } from 'react-router-dom';
 
 function Comment(props) {
-  const { postId } = props;
+  const { postId, preCmt, commentId } = props;
   const { userData } = useContext(UserContext);
   const nav = useNavigate();
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState(preCmt);
 
   const handleComment = (e) => {
     setComment(e.target.value);
   };
 
-  const writeComment = () => {
+  const writeComment = (e) => {
     const req = {
       postId: postId,
       userId: userData,
       comment: comment,
     };
-    console.log(req);
-    Request.post(`http://localhost:8080/api/comment/write`, req).then((res) => {
-      if (res.data.error == null) {
-        nav(`/PostShow/${postId}`);
-      } else {
-        alert(res.data.error.message);
-      }
-    });
+    if (preCmt != undefined) {
+      req.commentId = commentId;
+      Request.put(`http://localhost:8080/api/comment/modify`, req).then((res) => {
+        if (res.data.error == null) {
+          props.setIsUpdate(false);
+          nav(`/PostShow/${postId}`);
+        } else {
+          alert(res.data.error.message);
+        }
+      });
+    } else {
+      Request.post(`http://localhost:8080/api/comment/write`, req).then((res) => {
+        if (res.data.error == null) {
+          setComment("");
+          nav(`/PostShow/${postId}`);
+        } else {
+          alert(res.data.error.message);
+        }
+      });
+    }
   };
 
   return (
     <div className="input-group mb-3">
       <input
         onChange={handleComment}
+        value={comment}
         type="text"
         className="form-control"
         aria-describedby="button-addon2"
@@ -43,7 +56,7 @@ function Comment(props) {
           onClick={writeComment}
           className="btn btn-outline-secondary"
           id="button-addon2">
-          댓글작성
+          {preCmt != undefined ? "댓글수정" : commentId != undefined ? "답글작성" : "댓글작성"}
         </button>
       </div>
     </div>
