@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function SearchBar(props) {
   const [query, setQuery] = useState('');
+  const nav = useNavigate();
 
   const queryHandler = (e) => {
     setQuery(e.target.value);
+  }
+
+  const search = () => {
+    if(query.split(" ").join("") != "") {
+      nav(`/Search/${query}`)
+    }
   }
 
   return (
@@ -18,16 +25,11 @@ function SearchBar(props) {
         onChange={queryHandler}
       />
       <div className="input-group-append">
-        <Link
-          to={{
-            pathname: `/Search/${query}`,
-          }}
-          replace={true}>
-          <button
-            className="btn btn-outline-secondary"
-            id="button-addon2"
-          >검색</button>
-        </Link>
+        <button
+          onClick={search}
+          className="btn btn-outline-secondary"
+          id="button-addon2"
+        >검색</button>
       </div>
     </div>
   );
