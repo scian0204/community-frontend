@@ -1,11 +1,13 @@
 import React, { useContext, useState } from 'react';
 import Request from '../Request';
 import UserContext from '../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 function Login(props) {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const { setUserData } = useContext(UserContext);
+  const nav = useNavigate();
 
   const handleUserId = (e) => {
     setUserId(e.target.value);
@@ -62,7 +64,7 @@ function Login(props) {
       <button onClick={handleSubmit} className="btn btn-primary">
         로그인
       </button>
-      <button className="btn btn-warning">회원가입</button>
+      <button onClick={()=>nav('/UserForm')} className="btn btn-warning">회원가입</button>
       {/* </form> */}
     </div>
   );

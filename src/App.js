@@ -11,6 +11,8 @@ import Search from './routes/Search';
 import { useEffect, useState } from 'react';
 import UserContext from './context/UserContext';
 import Request from './Request';
+import PostForm from './routes/PostForm';
+import UserForm from './routes/UserForm';
 
 function App() {
   const [userData, setUserData] = useState(null);
@@ -46,7 +48,8 @@ function App() {
               <Route refresh path="/:boardId" element={<Home />} />
               <Route refresh path="/BoardApprove" element={<BoardApprove />} />
               <Route refresh path="/BoardShow" element={<BoardShow />} />
-              <Route refresh path="/Form/:form" element={<Form />} />
+              <Route refresh path="/PostForm/:boardId" element={<PostForm />} />
+              <Route refresh path="/UserForm/" element={<UserForm />} />
               <Route refresh path="/PostShow/:postId" element={<PostShow />} />
               <Route refresh path="/Profile/:userId" element={<Profile />} />
               <Route refresh path="/Search/:query" element={<Search />} />
