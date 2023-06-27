@@ -4,7 +4,6 @@ import SearchBar from './components/SearchBar';
 import Home from './routes/Home';
 import BoardApprove from './routes/BoardApprove';
 import BoardShow from './routes/BoardShow';
-import Form from './routes/Form';
 import PostShow from './routes/PostShow';
 import Profile from './routes/Profile';
 import Search from './routes/Search';
