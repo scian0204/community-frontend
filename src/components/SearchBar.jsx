@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 function SearchBar(props) {
+  const [query, setQuery] = useState('');
+
+  const queryHandler = (e) => {
+    setQuery(e.target.value);
+  }
+
   return (
     <div className="input-group mb-3">
       <input
@@ -9,22 +15,18 @@ function SearchBar(props) {
         className="form-control"
         aria-describedby="button-addon2"
         required
+        onChange={queryHandler}
       />
       <div className="input-group-append">
         <Link
           to={{
-            pathname: '/',
+            pathname: `/Search/${query}`,
           }}
           replace={true}>
-          <input
-            onClick={(e) =>
-              (e.target.parentElement.parentElement.previousSibling.value = '')
-            }
+          <button
             className="btn btn-outline-secondary"
-            type="submit"
             id="button-addon2"
-            value="search"
-          />
+          >검색</button>
         </Link>
       </div>
     </div>

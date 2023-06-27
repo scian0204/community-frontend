@@ -9,21 +9,34 @@ function BoardShow(props) {
   const [isFirst, setIsFirst] = useState(true);
   const [isLast, setIsLast] = useState(false);
   const [totalPage, setTotalPage] = useState();
-  const [isSearch, setIsSearch] = useState(false);
+  const [isSearch, setIsSearch] = useState(props.query!=null);
 
   const nav = useNavigate();
 
   useEffect(() => {
     setIsLoading(false);
-    Request.get(
-      `http://localhost:8080/api/board/list?page=${currentPage - 1}&size=10`
-    ).then((res) => {
-      setBoardList(res.data.data.content);
-      setIsFirst(res.data.data.first);
-      setIsLast(res.data.data.last);
-      setTotalPage(res.data.data.totalPages);
-      setIsLoading(true);
-    });
+    if (isSearch) {
+      const {query} = props;
+      Request.get(
+        `http://localhost:8080/api/board/listByLike/${query}?page=${currentPage - 1}&size=10`
+      ).then((res) => {
+        setBoardList(res.data.data.content);
+        setIsFirst(res.data.data.first);
+        setIsLast(res.data.data.last);
+        setTotalPage(res.data.data.totalPages);
+        setIsLoading(true);
+      });
+    } else {
+      Request.get(
+        `http://localhost:8080/api/board/list?page=${currentPage - 1}&size=10`
+      ).then((res) => {
+        setBoardList(res.data.data.content);
+        setIsFirst(res.data.data.first);
+        setIsLast(res.data.data.last);
+        setTotalPage(res.data.data.totalPages);
+        setIsLoading(true);
+      });
+    }
   }, [currentPage]);
 
   const numberToArray = (num) => {

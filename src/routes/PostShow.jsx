@@ -6,7 +6,7 @@ import CmtList from '../components/CmtList';
 import Comment from '../components/Comment';
 
 function PostShow(props) {
-  const postId = useParams().postId;
+  const {postId} = useParams();
   const [post, setPost] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
@@ -19,7 +19,7 @@ function PostShow(props) {
       setPost(res.data.data);
       setIsLoading(true);
     });
-  }, [postId]);
+  }, []);
 
   const deletePost = () => {
     Request.delete(`http://localhost:8080/api/post/delete/${postId}`).then(

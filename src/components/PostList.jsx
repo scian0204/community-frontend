@@ -20,7 +20,21 @@ function PostList(props) {
 
   useEffect(() => {
     setIsLoading(false);
-    if (boardId == null) {
+    if (props.query != null) {
+      const {query} = props;
+      
+      Request.get(`http://localhost:8080/api/post/listByLike/${query}?page=${currentPage - 1}&size=10`).then(res=>{
+        if(res.data.error == null) {
+          setPostList(res.data.data.content);
+          setIsFirst(res.data.data.first);
+          setIsLast(res.data.data.last);
+          setTotalPage(res.data.data.totalPages);
+          setIsLoading(true);
+        }else {
+          alert(res.data.error.message)
+        }
+      });
+    } else if (boardId == null) {
       Request.get(
         `http://localhost:8080/api/post/list?page=${currentPage - 1}&size=10`
       ).then((res) => {
