@@ -20,7 +20,7 @@ function CmtList(props) {
         currentPage - 1
       }&size=10`
     ).then((res) => {
-      setCommentList(res.data.data.content);
+      setCommentList(res.data.data.content.reverse());
       setIsFirst(res.data.data.first);
       setIsLast(res.data.data.last);
       setTotalPage(res.data.data.totalPages);
