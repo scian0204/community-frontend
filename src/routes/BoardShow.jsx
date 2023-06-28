@@ -11,18 +11,20 @@ function BoardShow(props) {
   const [isFirst, setIsFirst] = useState(true);
   const [isLast, setIsLast] = useState(false);
   const [totalPage, setTotalPage] = useState();
-  const [isSearch, setIsSearch] = useState(props.query!=null);
+  const [isSearch, setIsSearch] = useState(props.query != null);
 
-  const {userData} = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
   const nav = useNavigate();
 
   useEffect(() => {
     setIsLoading(false);
     if (isSearch) {
-      const {query} = props;
+      const { query } = props;
       Request.get(
-        `http://localhost:8080/api/board/listByLike/${query}?page=${currentPage - 1}&size=10`
+        `http://localhost:8080/api/board/listByLike/${query}?page=${
+          currentPage - 1
+        }&size=10`
       ).then((res) => {
         setBoardList(res.data.data.content);
         setIsFirst(res.data.data.first);
@@ -72,14 +74,19 @@ function BoardShow(props) {
   };
 
   const deleteBoard = (boardId) => {
-    Request.delete(`http://localhost:8080/api/board/delete/${boardId}`).then(res=>{
-      if (res.data.error == null) {
-        nav('/BoardShow')
-      }else {
-        alert(res.data.error.message);
-      }
-    })
-  }
+    const confirm = window.confirm('삭제?');
+    if (confirm) {
+      Request.delete(`http://localhost:8080/api/board/delete/${boardId}`).then(
+        (res) => {
+          if (res.data.error == null) {
+            nav('/BoardShow');
+          } else {
+            alert(res.data.error.message);
+          }
+        }
+      );
+    }
+  };
 
   return (
     <div>
@@ -111,29 +118,60 @@ function BoardShow(props) {
               <th scope="col">이름</th>
               <th scope="col">만든 유저</th>
               <th scope="col">등록일</th>
-              {userData&& <th scope='col'> </th>}
+              {userData && <th scope="col"> </th>}
             </tr>
           </thead>
           <tbody>
-            {boardList.map((board) => {
-              return (
-                <tr
+            {boardList.map((board) => (
+              <tr key={`tr_${board.boardId}`}>
+                <td
                   onClick={() => {
                     nav(`/${board.boardId}`);
                   }}
-                  key={`tr_${board.boardId}`}>
-                  <td key={`boardId_${board.boardId}`}>{board.boardId}</td>
-                  <td key={`boardName_${board.boardId}`}>{board.boardName}</td>
-                  <td key={`userId_${board.boardId}`}>{board.userId}</td>
-                  <td key={`regDate_${board.boardId}`}>
-                    {new Date(parseInt(board.regDate)).toLocaleDateString()}
+                  key={`boardId_${board.boardId}`}>
+                  {board.boardId}
+                </td>
+                <td
+                  onClick={() => {
+                    nav(`/${board.boardId}`);
+                  }}
+                  key={`boardName_${board.boardId}`}>
+                  {board.boardName}
+                </td>
+                <td
+                  onClick={() => {
+                    nav(`/${board.boardId}`);
+                  }}
+                  key={`userId_${board.boardId}`}>
+                  {board.userId}
+                </td>
+                <td
+                  onClick={() => {
+                    nav(`/${board.boardId}`);
+                  }}
+                  key={`regDate_${board.boardId}`}>
+                  {new Date(parseInt(board.regDate)).toLocaleDateString()}
+                </td>
+                {userData == board.userId && (
+                  <td>
+                    <button
+                      onClick={() => {
+                        deleteBoard(board.boardId);
+                      }}
+                      className="btn btn-danger">
+                      삭제
+                    </button>
+                    <button
+                      onClick={() => {
+                        nav(`/BoardForm`, { state: board });
+                      }}
+                      className="btn btn-warning">
+                      수정
+                    </button>
                   </td>
-                  {userData == board.userId &&
-                    <td><button onClick={()=>{deleteBoard(board.boardId)}} className='btn btn-danger'>삭제</button></td>
-                  }
-                </tr>
-              );
-            })}
+                )}
+              </tr>
+            ))}
           </tbody>
         </table>
         <Paging
