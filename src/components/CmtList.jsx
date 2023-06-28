@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Request from '../Request';
 import Cmt from './Cmt';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Paging from './Paging';
 
 function CmtList(props) {
@@ -11,7 +11,7 @@ function CmtList(props) {
   const [isFirst, setIsFirst] = useState(true);
   const [isLast, setIsLast] = useState(false);
   const [totalPage, setTotalPage] = useState();
-  const [isProfile, setIsProfile] = useState(props.userId != null);
+  const [isProfile] = useState(props.userId != null);
   const { postId } = props;
   const nav = useNavigate();
 
@@ -44,38 +44,40 @@ function CmtList(props) {
         setIsLoading(true);
       });
     }
-  }, [currentPage, useParams()]);
+  }, [currentPage, postId, isProfile, props]);
 
   return (
-    <div>
-      <Paging
-        isFirst={isFirst}
-        totalPage={totalPage}
-        currentPage={currentPage}
-        isLast={isLast}
-        setCurrentPage={setCurrentPage}
-      />
-      {commentList.map((comment) => (
-        <div
-          onClick={() => {
-            if (isProfile) nav(`/PostShow/${comment.postId}`);
-          }}
-          key={comment.commentId}>
-          <Cmt
-            key={comment.commentId}
-            comment={comment}
-            isProfile={isProfile}
-          />
-        </div>
-      ))}
-      <Paging
-        isFirst={isFirst}
-        totalPage={totalPage}
-        currentPage={currentPage}
-        isLast={isLast}
-        setCurrentPage={setCurrentPage}
-      />
-    </div>
+    isLoading && (
+      <div>
+        <Paging
+          isFirst={isFirst}
+          totalPage={totalPage}
+          currentPage={currentPage}
+          isLast={isLast}
+          setCurrentPage={setCurrentPage}
+        />
+        {commentList.map((comment) => (
+          <div
+            onClick={() => {
+              if (isProfile) nav(`/PostShow/${comment.postId}`);
+            }}
+            key={comment.commentId}>
+            <Cmt
+              key={comment.commentId}
+              comment={comment}
+              isProfile={isProfile}
+            />
+          </div>
+        ))}
+        <Paging
+          isFirst={isFirst}
+          totalPage={totalPage}
+          currentPage={currentPage}
+          isLast={isLast}
+          setCurrentPage={setCurrentPage}
+        />
+      </div>
+    )
   );
 }
 
