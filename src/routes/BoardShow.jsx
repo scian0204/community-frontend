@@ -12,6 +12,7 @@ function BoardShow(props) {
   const [isLast, setIsLast] = useState(false);
   const [totalPage, setTotalPage] = useState();
   const [isSearch, setIsSearch] = useState(props.query != null);
+  const [isProfile, setIsProfile] = useState(props.userId != null);
 
   const { userData } = useContext(UserContext);
 
@@ -19,7 +20,21 @@ function BoardShow(props) {
 
   useEffect(() => {
     setIsLoading(false);
-    if (isSearch) {
+
+    if (isProfile) {
+      const { userId } = props;
+      Request.get(
+        `http://localhost:8080/api/board/listByUser/${userId}?page=${
+          currentPage - 1
+        }$size=10`
+      ).then((res) => {
+        setBoardList(res.data.data.content);
+        setIsFirst(res.data.data.first);
+        setIsLast(res.data.data.last);
+        setTotalPage(res.data.data.totalPages);
+        setIsLoading(true);
+      });
+    } else if (isSearch) {
       const { query } = props;
       Request.get(
         `http://localhost:8080/api/board/listByLike/${query}?page=${
@@ -92,7 +107,7 @@ function BoardShow(props) {
     <div>
       <div id="bdr" style={{ border: '1px solid blue', padding: '10px' }}>
         <div id="btns">
-          {isSearch ? null : userData != null ? (
+          {isSearch || isProfile ? null : userData != null ? (
             <Link to={{ pathname: '/BoardForm' }}>
               <button className="btn btn-primary">게시판 요청</button>
             </Link>

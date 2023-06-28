@@ -8,7 +8,7 @@ import Paging from './Paging';
 function PostList(props) {
   const { boardId } = props;
   const [isSearch, setIsSearch] = useState(props.query != null);
-  const [isProfile, setIsProfile] = useState(false);
+  const [isProfile, setIsProfile] = useState(props.userId != null);
   const [postList, setPostList] = useState([]);
   const [isRecmd, setIsRecmd] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,27 +19,52 @@ function PostList(props) {
 
   const nav = useNavigate();
 
-  const {userData} = useContext(UserContext);
+  const { userData } = useContext(UserContext);
 
   useEffect(() => {
     setIsLoading(false);
-    if (props.query != null) {
-      const {query} = props;
-      
-      Request.get(`http://localhost:8080/api/post/listByLike/${query}?page=${currentPage - 1}&size=10`).then(res=>{
-        if(res.data.error == null) {
+
+    if (isProfile) {
+      const { userId } = props;
+
+      Request.get(
+        `http://localhost:8080/api/post/listByUser/${userId}?page=${
+          currentPage - 1
+        }&size=10`
+      ).then((res) => {
+        if (res.data.error == null) {
           setPostList(res.data.data.content);
           setIsFirst(res.data.data.first);
           setIsLast(res.data.data.last);
           setTotalPage(res.data.data.totalPages);
           setIsLoading(true);
-        }else {
-          alert(res.data.error.message)
+        } else {
+          alert(res.data.error.message);
+        }
+      });
+    } else if (isSearch) {
+      const { query } = props;
+
+      Request.get(
+        `http://localhost:8080/api/post/listByLike/${query}?page=${
+          currentPage - 1
+        }&size=10`
+      ).then((res) => {
+        if (res.data.error == null) {
+          setPostList(res.data.data.content);
+          setIsFirst(res.data.data.first);
+          setIsLast(res.data.data.last);
+          setTotalPage(res.data.data.totalPages);
+          setIsLoading(true);
+        } else {
+          alert(res.data.error.message);
         }
       });
     } else if (boardId == null) {
       Request.get(
-        `http://localhost:8080/api/post/${isRecmd?"recmdList":"list"}?page=${currentPage - 1}&size=10`
+        `http://localhost:8080/api/post/${
+          isRecmd ? 'recmdList' : 'list'
+        }?page=${currentPage - 1}&size=10`
       ).then((res) => {
         setPostList(res.data.data.content);
         setIsFirst(res.data.data.first);
@@ -49,9 +74,9 @@ function PostList(props) {
       });
     } else {
       Request.get(
-        `http://localhost:8080/api/post/${isRecmd?"recmdList":"list"}/${boardId}?page=${
-          currentPage - 1
-        }&size=10`
+        `http://localhost:8080/api/post/${
+          isRecmd ? 'recmdList' : 'list'
+        }/${boardId}?page=${currentPage - 1}&size=10`
       ).then((res) => {
         setPostList(res.data.data.content);
         setIsFirst(res.data.data.first);
@@ -65,6 +90,11 @@ function PostList(props) {
   useEffect(() => {
     setCurrentPage(1);
   }, [boardId]);
+
+  const toggleRecmd = () => {
+    setCurrentPage(1);
+    setIsRecmd((preIsRecmd) => !preIsRecmd);
+  };
 
   const numberToArray = (num) => {
     const arr = [];
@@ -100,17 +130,25 @@ function PostList(props) {
         {!(isProfile || isSearch) ? (
           <div id="btns">
             <div>
-              <button onClick={()=>setIsRecmd(false)} className={`btn btn-${isRecmd?"outline-":""}primary`}>
+              <button
+                onClick={toggleRecmd}
+                className={`btn btn-${isRecmd ? 'outline-' : ''}primary`}>
                 일반글
               </button>
-              <button onClick={()=>setIsRecmd(true)} className={`btn btn-${!isRecmd?"outline-":""}success`}>
+              <button
+                onClick={toggleRecmd}
+                className={`btn btn-${!isRecmd ? 'outline-' : ''}success`}>
                 인기글
               </button>
-            <div className="float-right">
-              {(userData != null && boardId != null) &&
-                <button onClick={()=>nav(`/PostForm/${boardId}`)} className="btn btn-secondary">글쓰기</button>
-              }
-            </div>
+              <div className="float-right">
+                {userData != null && boardId != null && (
+                  <button
+                    onClick={() => nav(`/PostForm/${boardId}`)}
+                    className="btn btn-secondary">
+                    글쓰기
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ) : (

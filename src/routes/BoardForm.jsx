@@ -60,6 +60,9 @@ function BoardForm(props) {
           <button onClick={apply} className="btn btn-primary">
             {isUpdate ? '수정신청' : '신청'}
           </button>
+          <button onClick={() => nav(-1)} className="btn btn-warning">
+            취소
+          </button>
         </div>
         <div className="col-sm-2"></div>
       </div>

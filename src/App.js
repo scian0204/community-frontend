@@ -23,7 +23,6 @@ function App() {
       setUserData(res.data.data);
     });
     Request.get('http://localhost:8080/api/user/isAdmin').then((res) => {
-      console.log(res.data.data);
       setIsAdmin(res.data.data);
     });
   }, []);
