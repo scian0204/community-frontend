@@ -96,34 +96,6 @@ function PostList(props) {
     setIsRecmd((preIsRecmd) => !preIsRecmd);
   };
 
-  const numberToArray = (num) => {
-    const arr = [];
-    for (let i = 1; i <= num; i++) {
-      arr.push(i);
-    }
-    return arr;
-  };
-
-  const toFirst = () => {
-    setCurrentPage(1);
-  };
-
-  const toPrePage = () => {
-    setCurrentPage(currentPage - 1);
-  };
-
-  const toPage = (e) => {
-    setCurrentPage(e.target.innerText);
-  };
-
-  const toNextPage = () => {
-    setCurrentPage(parseInt(currentPage) + 1);
-  };
-
-  const toLast = () => {
-    setCurrentPage(totalPage);
-  };
-
   return (
     <div>
       <div id="bdr" style={{ border: '1px solid blue', padding: '10px' }}>
@@ -177,15 +149,10 @@ function PostList(props) {
         </table>
         <Paging
           isFirst={isFirst}
-          toFirst={toFirst}
-          toPrePage={toPrePage}
           totalPage={totalPage}
           currentPage={currentPage}
-          toPage={toPage}
           isLast={isLast}
-          toNextPage={toNextPage}
-          toLast={toLast}
-          numberToArray={numberToArray}
+          setCurrentPage={setCurrentPage}
         />
       </div>
     </div>
