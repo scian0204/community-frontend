@@ -54,7 +54,7 @@ function BoardForm(props) {
           <input
             defaultValue={board?.boardName}
             type="text"
-            className="input-group"
+            className="form-control"
             ref={boardNameRef}
           />
           <button onClick={apply} className="btn btn-primary">

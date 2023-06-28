@@ -53,7 +53,7 @@ function PostForm(props) {
           제목:
           <input
             type="text"
-            className="input-group"
+            className="form-control"
             defaultValue={title}
             ref={titleRef}
           />
