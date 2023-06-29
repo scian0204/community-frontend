@@ -11,7 +11,7 @@ function Request(reqData, excute) {
   };
 
   req[reqData.method](
-    `http://localhost:8080/api/${reqData.query}`,
+    `http://haniumdb.kro.kr:8080/api/${reqData.query}`,
     reqData?.body
   ).then((res) => {
     excute(res);
