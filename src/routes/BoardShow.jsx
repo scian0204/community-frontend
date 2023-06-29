@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import Request from '../Request';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Paging from '../components/Paging';
 import UserContext from '../context/UserContext';
 import BoardRow from './../components/BoardRow';
+import Request from '../Request';
 
 function BoardShow(props) {
   const [boardList, setBoardList] = useState([]);
@@ -24,40 +24,50 @@ function BoardShow(props) {
 
     if (isProfile) {
       const { userId } = props;
-      Request.get(
-        `http://localhost:8080/api/board/listByUser/${userId}?page=${
-          currentPage - 1
-        }$size=10`
-      ).then((res) => {
-        setBoardList(res.data.data.content);
-        setIsFirst(res.data.data.first);
-        setIsLast(res.data.data.last);
-        setTotalPage(res.data.data.totalPages);
-        setIsLoading(true);
-      });
+
+      Request(
+        {
+          method: 'get',
+          query: `board/listByUser/${userId}?page=${currentPage - 1}$size=10`,
+        },
+        (res) => {
+          setBoardList(res.data.data.content);
+          setIsFirst(res.data.data.first);
+          setIsLast(res.data.data.last);
+          setTotalPage(res.data.data.totalPages);
+          setIsLoading(true);
+        }
+      );
     } else if (isSearch) {
       const { query } = props;
-      Request.get(
-        `http://localhost:8080/api/board/listByLike/${query}?page=${
-          currentPage - 1
-        }&size=10`
-      ).then((res) => {
-        setBoardList(res.data.data.content);
-        setIsFirst(res.data.data.first);
-        setIsLast(res.data.data.last);
-        setTotalPage(res.data.data.totalPages);
-        setIsLoading(true);
-      });
+
+      Request(
+        {
+          method: 'get',
+          query: `listByLike/${query}?page=${currentPage - 1}&size=10`,
+        },
+        (res) => {
+          setBoardList(res.data.data.content);
+          setIsFirst(res.data.data.first);
+          setIsLast(res.data.data.last);
+          setTotalPage(res.data.data.totalPages);
+          setIsLoading(true);
+        }
+      );
     } else {
-      Request.get(
-        `http://localhost:8080/api/board/list?page=${currentPage - 1}&size=10`
-      ).then((res) => {
-        setBoardList(res.data.data.content);
-        setIsFirst(res.data.data.first);
-        setIsLast(res.data.data.last);
-        setTotalPage(res.data.data.totalPages);
-        setIsLoading(true);
-      });
+      Request(
+        {
+          method: 'get',
+          query: `list?page=${currentPage - 1}&size=10`,
+        },
+        (res) => {
+          setBoardList(res.data.data.content);
+          setIsFirst(res.data.data.first);
+          setIsLast(res.data.data.last);
+          setTotalPage(res.data.data.totalPages);
+          setIsLoading(true);
+        }
+      );
     }
   }, [currentPage, useParams()]);
 

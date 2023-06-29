@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import Request from '../Request';
 import UserContext from '../context/UserContext';
 import CmtList from '../components/CmtList';
 import Comment from '../components/Comment';
+import Request from '../Request';
 
 function PostShow(props) {
-  const {postId} = useParams();
+  const { postId } = useParams();
   const [post, setPost] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const nav = useNavigate();
@@ -15,14 +15,29 @@ function PostShow(props) {
 
   useEffect(() => {
     setIsLoading(false);
-    Request.get(`http://localhost:8080/api/post/${postId}`).then((res) => {
-      setPost(res.data.data);
-      setIsLoading(true);
-    });
+
+    Request(
+      {
+        method: 'get',
+        query: `post/${postId}`,
+      },
+      (res) => {
+        if (res.data.error == null) {
+          setPost(res.data.data);
+          setIsLoading(true);
+        } else {
+          alert(res.data.error.message);
+        }
+      }
+    );
   }, []);
 
   const deletePost = () => {
-    Request.delete(`http://localhost:8080/api/post/delete/${postId}`).then(
+    Request(
+      {
+        method: 'delete',
+        query: `post/delete/${postId}`,
+      },
       (res) => {
         if (res.data.error == null) {
           alert('글 삭제됨');
@@ -35,30 +50,42 @@ function PostShow(props) {
   };
 
   const recmdPost = () => {
-    Request.get(`http://localhost:8080/api/post/recmd/${postId}`).then(res=>{
-      if (res.data.error == null) {
-        setPost(res.data.data);
-      } else {
-        if(res.data.error.errorId == 1) alert(res.data.error.message);
-        else {
-          let deRecmd = window.confirm("이미 추천함. 취소?");
-          if (deRecmd) {
-            deRecmdPost();
+    Request(
+      {
+        method: 'get',
+        query: `post/recmd/${postId}`,
+      },
+      (res) => {
+        if (res.data.error == null) {
+          setPost(res.data.data);
+        } else {
+          if (res.data.error.errorId == 1) alert(res.data.error.message);
+          else {
+            let deRecmd = window.confirm('이미 추천함. 취소?');
+            if (deRecmd) {
+              deRecmdPost();
+            }
           }
         }
       }
-    })
-  }
+    );
+  };
 
   const deRecmdPost = () => {
-    Request.delete(`http://localhost:8080/api/post/recmd/${postId}`).then(res=>{
-      if (res.data.error == null) {
-        setPost(res.data.data);
-      } else {
-        alert(res.data.error.message);
+    Request(
+      {
+        method: 'delete',
+        query: `post/recmd/${postId}`,
+      },
+      (res) => {
+        if (res.data.error == null) {
+          setPost(res.data.data);
+        } else {
+          alert(res.data.error.message);
+        }
       }
-    })
-  }
+    );
+  };
 
   return (
     <div>
@@ -93,13 +120,19 @@ function PostShow(props) {
                   className="btn btn-danger float-right">
                   삭제
                 </button>
-                <button onClick={()=>{
-                  nav(`/PostForm/${post.boardId}`, {state: {
-                    postId: postId,
-                    title: post.title,
-                    content: post.content
-                  }})
-                }} className="btn btn-warning float-right">수정</button>
+                <button
+                  onClick={() => {
+                    nav(`/PostForm/${post.boardId}`, {
+                      state: {
+                        postId: postId,
+                        title: post.title,
+                        content: post.content,
+                      },
+                    });
+                  }}
+                  className="btn btn-warning float-right">
+                  수정
+                </button>
               </div>
             )}
           </div>
@@ -127,11 +160,14 @@ function PostShow(props) {
           <br />
           <div style={{ textAlign: 'center' }} className="center-block">
             <h5>{post.recommend}</h5>
-            {userData != null && 
-              <button onClick={recmdPost} style={{ textAlign: 'center' }} className="btn btn-primary">
+            {userData != null && (
+              <button
+                onClick={recmdPost}
+                style={{ textAlign: 'center' }}
+                className="btn btn-primary">
                 추천{' '}
               </button>
-            }
+            )}
           </div>
           <br />
           <br />

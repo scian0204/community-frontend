@@ -1,7 +1,7 @@
 import React, { useContext, useRef } from 'react';
 import UserContext from '../context/UserContext';
-import Request from '../Request';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import Request from '../Request';
 
 function PostForm(props) {
   const location = useLocation();
@@ -24,24 +24,39 @@ function PostForm(props) {
       content: contentRef.current.value,
     };
     if (postId == undefined) {
-      Request.post(`http://localhost:8080/api/post/write`, req).then((res) => {
-        if (res.data.error == null) {
-          nav(`/${boardId}`);
-        } else {
-          alert(res.data.error.message);
+      Request(
+        {
+          method: 'post',
+          query: 'post/write',
+          body: req,
+        },
+        (res) => {
+          if (res.data.error == null) {
+            nav(`/${boardId}`);
+          } else {
+            alert(res.data.error.message);
+          }
         }
-      });
+      );
     } else {
       req.postId = postId;
       delete req.boardId;
       delete req.userId;
-      Request.put(`http://localhost:8080/api/post/update`, req).then((res) => {
-        if (res.data.error == null) {
-          nav(`/${boardId}`);
-        } else {
-          alert(res.data.error.message);
+
+      Request(
+        {
+          method: 'put',
+          query: 'post/update',
+          body: req,
+        },
+        (res) => {
+          if (res.data.error == null) {
+            nav(`/${boardId}`);
+          } else {
+            alert(res.data.error.message);
+          }
         }
-      });
+      );
     }
   };
 

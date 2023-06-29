@@ -11,22 +11,26 @@ function BoardApprove(props) {
   const [isFirst, setIsFirst] = useState(true);
   const [isLast, setIsLast] = useState(false);
   const [totalPage, setTotalPage] = useState();
-  const {isAdmin} = useContext(UserContext);
+  const { isAdmin } = useContext(UserContext);
   const nav = useNavigate();
   if (!isAdmin) {
     nav('/');
   }
 
-  useEffect(()=>{
-    Request.get(
-      `http://localhost:8080/api/board/notAllowedList?page=${currentPage - 1}&size=10`
-    ).then((res) => {
-      setBoardList(res.data.data.content);
-      setIsFirst(res.data.data.first);
-      setIsLast(res.data.data.last);
-      setTotalPage(res.data.data.totalPages);
-      setIsLoading(true);
-    });
+  useEffect(() => {
+    Request(
+      {
+        method: 'get',
+        query: `board/notAllowedList?page=${currentPage - 1}&size=10`,
+      },
+      (res) => {
+        setBoardList(res.data.data.content);
+        setIsFirst(res.data.data.first);
+        setIsLast(res.data.data.last);
+        setTotalPage(res.data.data.totalPages);
+        setIsLoading(true);
+      }
+    );
   }, [currentPage, useParams()]);
 
   const numberToArray = (num) => {
@@ -58,81 +62,104 @@ function BoardApprove(props) {
   };
 
   const approveBoard = (boardId) => {
-    Request.put(`http://localhost:8080/api/board/authorize/${boardId}`).then(res=>{
-      if (res.data.error == null) {
-        nav('/BoardApprove')
-      }else {
-        alert(res.data.error.message);
+    Request(
+      {
+        method: 'put',
+        query: `board/authorize/${boardId}`,
+      },
+      (res) => {
+        if (res.data.error == null) {
+          nav('/BoardApprove');
+        } else {
+          alert(res.data.error.message);
+        }
       }
-    })
-  }
+    );
+  };
 
   const deleteBoard = (boardId) => {
-    Request.delete(`http://localhost:8080/api/board/delete/${boardId}`).then(res=>{
-      if (res.data.error == null) {
-        nav('/BoardApprove')
-      }else {
-        alert(res.data.error.message);
+    Request(
+      {
+        method: 'delete',
+        query: `board/delete/${boardId}`,
+      },
+      (res) => {
+        if (res.data.error == null) {
+          nav('/BoardApprove');
+        } else {
+          alert(res.data.error.message);
+        }
       }
-    })
-  }
+    );
+  };
 
   return (
-    isLoading &&
-    <div>
-      <div id="bdr" style={{ border: '1px solid blue', padding: '10px' }}>
-        <div id="btns">
-          <button
-            onClick={() => {
-              nav(-1);
-            }}
-            className="btn btn-primary float-right">
-            이전
-          </button>
+    isLoading && (
+      <div>
+        <div id="bdr" style={{ border: '1px solid blue', padding: '10px' }}>
+          <div id="btns">
+            <button
+              onClick={() => {
+                nav(-1);
+              }}
+              className="btn btn-primary float-right">
+              이전
+            </button>
+          </div>
+          <table className="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">번호</th>
+                <th scope="col">이름</th>
+                <th scope="col">만든 유저</th>
+                <th scope="col">등록일</th>
+                <th scope="col">허가 여부</th>
+              </tr>
+            </thead>
+            <tbody>
+              {boardList.map((board) => {
+                return (
+                  <tr key={`tr_${board.boardId}`}>
+                    <td key={`boardId_${board.boardId}`}>{board.boardId}</td>
+                    <td key={`boardName_${board.boardId}`}>
+                      {board.boardName}
+                    </td>
+                    <td key={`userId_${board.boardId}`}>{board.userId}</td>
+                    <td key={`regDate_${board.boardId}`}>
+                      {new Date(parseInt(board.regDate)).toLocaleDateString()}
+                    </td>
+                    <td key={`btns_${board.boardId}`}>
+                      <button
+                        onClick={() => approveBoard(board.boardId)}
+                        className="btn btn-primary">
+                        허가
+                      </button>{' '}
+                      <button
+                        onClick={() => deleteBoard(board.boardId)}
+                        className="btn btn-danger">
+                        삭제
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <Paging
+            isFirst={isFirst}
+            toFirst={toFirst}
+            toPrePage={toPrePage}
+            totalPage={totalPage}
+            currentPage={currentPage}
+            toPage={toPage}
+            isLast={isLast}
+            toNextPage={toNextPage}
+            toLast={toLast}
+            numberToArray={numberToArray}
+          />
         </div>
-        <table className="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">번호</th>
-              <th scope="col">이름</th>
-              <th scope="col">만든 유저</th>
-              <th scope="col">등록일</th>
-              <th scope='col'>허가 여부</th>
-            </tr>
-          </thead>
-          <tbody>
-            {boardList.map((board) => {
-              return (
-                <tr key={`tr_${board.boardId}`}>
-                  <td key={`boardId_${board.boardId}`}>{board.boardId}</td>
-                  <td key={`boardName_${board.boardId}`}>{board.boardName}</td>
-                  <td key={`userId_${board.boardId}`}>{board.userId}</td>
-                  <td key={`regDate_${board.boardId}`}>
-                    {new Date(parseInt(board.regDate)).toLocaleDateString()}
-                  </td>
-                  <td key={`btns_${board.boardId}`}>
-                    <button onClick={()=>approveBoard(board.boardId)} className='btn btn-primary'>허가</button>{' '}
-                    <button onClick={()=>deleteBoard(board.boardId)} className='btn btn-danger'>삭제</button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <Paging
-          isFirst={isFirst}
-          toFirst={toFirst}
-          toPrePage={toPrePage}
-          totalPage={totalPage}
-          currentPage={currentPage}
-          toPage={toPage}
-          isLast={isLast}
-          toNextPage={toNextPage}
-          toLast={toLast}
-          numberToArray={numberToArray}
-        />
       </div>
-    </div>
+    )
   );
 }
 

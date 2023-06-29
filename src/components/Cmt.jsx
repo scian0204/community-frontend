@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
-import Request from '../Request';
 import Comment from './Comment';
+import Request from '../Request';
 
 function Cmt(props) {
   const { comment } = props;
@@ -23,16 +23,20 @@ function Cmt(props) {
   };
 
   const deleteCmt = () => {
-    Request.delete(
-      `http://localhost:8080/api/comment/delete/${comment.commentId}`
-    ).then((res) => {
-      if (res.data.error == null) {
-        alert('댓글 삭제됨');
-        nav(`/PostShow/${comment.postId}`);
-      } else {
-        alert(res.data.error.message);
+    Request(
+      {
+        method: 'delete',
+        query: `comment/delete/${comment.commentId}`,
+      },
+      (res) => {
+        if (res.data.error == null) {
+          alert('댓글 삭제됨');
+          nav(`/PostShow/${comment.postId}`);
+        } else {
+          alert(res.data.error.message);
+        }
       }
-    });
+    );
   };
 
   return (
@@ -46,7 +50,7 @@ function Cmt(props) {
             ></div>
             &nbsp;{comment.userId}
           </Link>
-          {userData == comment.userId && (
+          {!isProfile && userData == comment.userId && (
             <div className="float-right">
               <button
                 onClick={() => setIsUpdate(!isUpdate)}

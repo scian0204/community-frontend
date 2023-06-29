@@ -1,23 +1,35 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Board from './Board';
-import Request from '../Request';
 import UserContext from '../context/UserContext';
+import Request from '../Request';
 
 function BoardList(props) {
   const { boardId } = props;
-  const {userData} = useContext(UserContext);
+  const { userData } = useContext(UserContext);
   const [boardList, setBoardList] = useState([]);
   const [currentBoard, setCurrentBoard] = useState();
 
   useEffect(() => {
-    Request.get(`http://localhost:8080/api/board/listByRank`).then((res) => {
-      setBoardList(res.data.data);
-    });
+    Request(
+      {
+        method: 'get',
+        query: 'board/listByRank',
+      },
+      (res) => {
+        setBoardList(res.data.data);
+      }
+    );
     if (boardId != undefined) {
-      Request.get(`http://localhost:8080/api/board/${boardId}`).then((res) => {
-        setCurrentBoard(res.data.data);
-      });
+      Request(
+        {
+          method: 'get',
+          query: `board/${boardId}`,
+        },
+        (res) => {
+          setCurrentBoard(res.data.data);
+        }
+      );
     } else {
       setCurrentBoard(null);
     }

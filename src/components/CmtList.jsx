@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Request from '../Request';
 import Cmt from './Cmt';
 import { useNavigate } from 'react-router-dom';
 import Paging from './Paging';
+import Request from '../Request';
 
 function CmtList(props) {
   const [commentList, setCommentList] = useState([]);
@@ -20,29 +20,33 @@ function CmtList(props) {
     if (isProfile) {
       const { userId } = props;
 
-      Request.get(
-        `http://localhost:8080/api/comment/listByUser/${userId}?page=${
-          currentPage - 1
-        }&size=10`
-      ).then((res) => {
-        setCommentList(res.data.data.content.reverse());
-        setIsFirst(res.data.data.first);
-        setIsLast(res.data.data.last);
-        setTotalPage(res.data.data.totalPages);
-        setIsLoading(true);
-      });
+      Request(
+        {
+          method: 'get',
+          query: `comment/listByUser/${userId}?page=${currentPage - 1}&size=10`,
+        },
+        (res) => {
+          setCommentList(res.data.data.content.reverse());
+          setIsFirst(res.data.data.first);
+          setIsLast(res.data.data.last);
+          setTotalPage(res.data.data.totalPages);
+          setIsLoading(true);
+        }
+      );
     } else {
-      Request.get(
-        `http://localhost:8080/api/comment/${postId}?page=${
-          currentPage - 1
-        }&size=10`
-      ).then((res) => {
-        setCommentList(res.data.data.content);
-        setIsFirst(res.data.data.first);
-        setIsLast(res.data.data.last);
-        setTotalPage(res.data.data.totalPages);
-        setIsLoading(true);
-      });
+      Request(
+        {
+          method: 'get',
+          query: `comment/${postId}?page=${currentPage - 1}&size=10`,
+        },
+        (res) => {
+          setCommentList(res.data.data.content);
+          setIsFirst(res.data.data.first);
+          setIsLast(res.data.data.last);
+          setTotalPage(res.data.data.totalPages);
+          setIsLoading(true);
+        }
+      );
     }
   }, [currentPage, postId, isProfile, props]);
 

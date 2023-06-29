@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Post from './Post';
-import Request from '../Request';
 import UserContext from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import Paging from './Paging';
+import Request from '../Request';
 
 function PostList(props) {
   const { boardId } = props;
@@ -27,63 +27,79 @@ function PostList(props) {
     if (isProfile) {
       const { userId } = props;
 
-      Request.get(
-        `http://localhost:8080/api/post/listByUser/${userId}?page=${
-          currentPage - 1
-        }&size=10`
-      ).then((res) => {
-        if (res.data.error == null) {
-          setPostList(res.data.data.content);
-          setIsFirst(res.data.data.first);
-          setIsLast(res.data.data.last);
-          setTotalPage(res.data.data.totalPages);
-          setIsLoading(true);
-        } else {
-          alert(res.data.error.message);
+      Request(
+        {
+          method: 'get',
+          query: `post/listByUser/${userId}?page=${currentPage - 1}&size=10`,
+        },
+        (res) => {
+          if (res.data.error == null) {
+            setPostList(res.data.data.content);
+            setIsFirst(res.data.data.first);
+            setIsLast(res.data.data.last);
+            setTotalPage(res.data.data.totalPages);
+            setIsLoading(true);
+          } else {
+            alert(res.data.error.message);
+          }
         }
-      });
+      );
     } else if (isSearch) {
       const { query } = props;
 
-      Request.get(
-        `http://localhost:8080/api/post/listByLike/${query}?page=${
-          currentPage - 1
-        }&size=10`
-      ).then((res) => {
-        if (res.data.error == null) {
+      Request(
+        {
+          method: 'get',
+          query: `post/listByLike/${query}?page=${currentPage - 1}&size=10`,
+        },
+        (res) => {
+          if (res.data.error == null) {
+            setPostList(res.data.data.content);
+            setIsFirst(res.data.data.first);
+            setIsLast(res.data.data.last);
+            setTotalPage(res.data.data.totalPages);
+            setIsLoading(true);
+          } else {
+            alert(res.data.error.message);
+          }
+        }
+      );
+    } else if (boardId == null) {
+      Request(
+        {
+          method: 'get',
+          query: `post/${isRecmd ? 'recmdList' : 'list'}?page=${
+            currentPage - 1
+          }&size=10`,
+        },
+        (res) => {
           setPostList(res.data.data.content);
           setIsFirst(res.data.data.first);
           setIsLast(res.data.data.last);
           setTotalPage(res.data.data.totalPages);
           setIsLoading(true);
-        } else {
-          alert(res.data.error.message);
         }
-      });
-    } else if (boardId == null) {
-      Request.get(
-        `http://localhost:8080/api/post/${
-          isRecmd ? 'recmdList' : 'list'
-        }?page=${currentPage - 1}&size=10`
-      ).then((res) => {
-        setPostList(res.data.data.content);
-        setIsFirst(res.data.data.first);
-        setIsLast(res.data.data.last);
-        setTotalPage(res.data.data.totalPages);
-        setIsLoading(true);
-      });
+      );
     } else {
-      Request.get(
-        `http://localhost:8080/api/post/${
-          isRecmd ? 'recmdList' : 'list'
-        }/${boardId}?page=${currentPage - 1}&size=10`
-      ).then((res) => {
-        setPostList(res.data.data.content);
-        setIsFirst(res.data.data.first);
-        setIsLast(res.data.data.last);
-        setTotalPage(res.data.data.totalPages);
-        setIsLoading(true);
-      });
+      Request(
+        {
+          method: 'get',
+          query: `post/${isRecmd ? 'recmdList' : 'list'}/${boardId}?page=${
+            currentPage - 1
+          }&size=10`,
+        },
+        (res) => {
+          if (res.data.error == null) {
+            setPostList(res.data.data.content);
+            setIsFirst(res.data.data.first);
+            setIsLast(res.data.data.last);
+            setTotalPage(res.data.data.totalPages);
+            setIsLoading(true);
+          } else {
+            alert(res.data.error.message);
+          }
+        }
+      );
     }
   }, [currentPage, boardId, isRecmd]);
 

@@ -9,22 +9,34 @@ import Profile from './routes/Profile';
 import Search from './routes/Search';
 import { useEffect, useState } from 'react';
 import UserContext from './context/UserContext';
-import Request from './Request';
 import PostForm from './routes/PostForm';
 import UserForm from './routes/UserForm';
 import BoardForm from './routes/BoardForm';
+import Request from './Request';
 
 function App() {
   const [userData, setUserData] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    Request.get('http://localhost:8080/api/user/isLogin').then((res) => {
-      setUserData(res.data.data);
-    });
-    Request.get('http://localhost:8080/api/user/isAdmin').then((res) => {
-      setIsAdmin(res.data.data);
-    });
+    Request(
+      {
+        method: 'get',
+        query: 'user/isLogin',
+      },
+      (res) => {
+        setUserData(res.data.data);
+      }
+    );
+    Request(
+      {
+        method: 'get',
+        query: 'user/isAdmin',
+      },
+      (res) => {
+        setIsAdmin(res.data.data);
+      }
+    );
   }, []);
 
   return (

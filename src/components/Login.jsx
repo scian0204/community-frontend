@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
-import Request from '../Request';
 import UserContext from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import Request from '../Request';
 
 function Login(props) {
   const [userId, setUserId] = useState('');
@@ -21,17 +21,26 @@ function Login(props) {
     if (userId.length < 1 || password.length < 1) {
       alert('필수입력 항목임');
     } else {
-      Request.post(`http://localhost:8080/api/user/login`, {
+      const body = {
         userId: userId,
         password: password,
-      }).then((res) => {
-        if (res.data.error != null) {
-          alert(res.data.error.message);
-        } else {
-          setUserData(res.data.data.userId);
-          setIsAdmin(res.data.data.isAdmin);
+      };
+
+      Request(
+        {
+          method: 'post',
+          query: `user/login`,
+          body: body,
+        },
+        (res) => {
+          if (res.data.error != null) {
+            alert(res.data.error.message);
+          } else {
+            setUserData(res.data.data.userId);
+            setIsAdmin(res.data.data.isAdmin);
+          }
         }
-      });
+      );
     }
   };
 
@@ -65,7 +74,9 @@ function Login(props) {
       <button onClick={handleSubmit} className="btn btn-primary">
         로그인
       </button>
-      <button onClick={()=>nav('/UserForm')} className="btn btn-warning">회원가입</button>
+      <button onClick={() => nav('/UserForm')} className="btn btn-warning">
+        회원가입
+      </button>
       {/* </form> */}
     </div>
   );

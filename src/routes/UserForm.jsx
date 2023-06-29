@@ -1,7 +1,7 @@
 import React, { useContext, useRef } from 'react';
-import Request from '../Request';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
+import Request from '../Request';
 
 function UserForm(props) {
   const nav = useNavigate();
@@ -24,14 +24,21 @@ function UserForm(props) {
         userName: userNameRef.current.value,
         password: password,
       };
-      Request.post(`http://localhost:8080/api/user/signUp`, req).then((res) => {
-        if (res.data.error == null) {
-          setUserData(res.data.data.userId);
-          nav(-1);
-        } else {
-          alert(res.data.error.message);
+      Request(
+        {
+          method: 'post',
+          query: 'user/signUp',
+          body: req,
+        },
+        (res) => {
+          if (res.data.error == null) {
+            setUserData(res.data.data.userId);
+            nav(-1);
+          } else {
+            alert(res.data.error.message);
+          }
         }
-      });
+      );
     }
   };
 

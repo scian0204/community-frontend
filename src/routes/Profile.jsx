@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Request from '../Request';
 import Gboard from '../components/Gboard';
 import BoardShow from './BoardShow';
 import PostList from '../components/PostList';
 import CmtList from './../components/CmtList';
+import Request from '../Request';
 
 function Profile(props) {
   const { userId } = useParams();
@@ -22,13 +22,19 @@ function Profile(props) {
   };
 
   useEffect(() => {
-    Request.get(`http://localhost:8080/api/user/${userId}`).then((res) => {
-      if (res.data.error == null) {
-        setUserInfo(res.data.data);
-      } else {
-        alert(res.data.error.message);
+    Request(
+      {
+        method: 'get',
+        query: `user/${userId}`,
+      },
+      (res) => {
+        if (res.data.error == null) {
+          setUserInfo(res.data.data);
+        } else {
+          alert(res.data.error.message);
+        }
       }
-    });
+    );
   }, [userId]);
 
   return (

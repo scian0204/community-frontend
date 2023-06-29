@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import Request from '../Request';
 import { useNavigate } from 'react-router-dom';
 import UserContext from '../context/UserContext';
+import Request from '../Request';
 
 function BoardRow(props) {
   const { board } = props;
@@ -11,7 +11,11 @@ function BoardRow(props) {
   const deleteBoard = (boardId) => {
     const confirm = window.confirm('삭제?');
     if (confirm) {
-      Request.delete(`http://localhost:8080/api/board/delete/${boardId}`).then(
+      Request(
+        {
+          method: 'delete',
+          api: `board/delete/${boardId}`,
+        },
         (res) => {
           if (res.data.error == null) {
             nav('/BoardShow');

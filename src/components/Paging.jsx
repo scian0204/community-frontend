@@ -9,8 +9,9 @@ function Paging(props) {
     let end = totalPage;
 
     if (totalPage > 10) {
-      let howtoLast = totalPage - currentPage;
-      start = howtoLast > 4 ? currentPage - 5 : currentPage - (9 - howtoLast);
+      let currentToLast = totalPage - currentPage;
+      start =
+        currentToLast > 4 ? currentPage - 5 : currentPage - (9 - currentToLast);
       start = start <= 1 ? 1 : start;
       end = start + 9;
     }

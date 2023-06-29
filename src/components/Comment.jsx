@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import UserContext from '../context/UserContext';
-import Request from '../Request';
 import { useNavigate } from 'react-router-dom';
+import Request from '../Request';
 
 function Comment(props) {
   const { postId, preCmt, commentId } = props;
@@ -21,23 +21,37 @@ function Comment(props) {
     };
     if (preCmt != undefined) {
       req.commentId = commentId;
-      Request.put(`http://localhost:8080/api/comment/modify`, req).then((res) => {
-        if (res.data.error == null) {
-          props.setIsUpdate(false);
-          nav(`/PostShow/${postId}`);
-        } else {
-          alert(res.data.error.message);
+      Request(
+        {
+          method: 'put',
+          query: `comment/modify`,
+          body: req,
+        },
+        (res) => {
+          if (res.data.error == null) {
+            props.setIsUpdate(false);
+            nav(`/PostShow/${postId}`);
+          } else {
+            alert(res.data.error.message);
+          }
         }
-      });
+      );
     } else {
-      Request.post(`http://localhost:8080/api/comment/write`, req).then((res) => {
-        if (res.data.error == null) {
-          setComment("");
-          nav(`/PostShow/${postId}`);
-        } else {
-          alert(res.data.error.message);
+      Request(
+        {
+          method: 'post',
+          query: `comment/write`,
+          body: req,
+        },
+        (res) => {
+          if (res.data.error == null) {
+            setComment('');
+            nav(`/PostShow/${postId}`);
+          } else {
+            alert(res.data.error.message);
+          }
         }
-      });
+      );
     }
   };
 
@@ -56,7 +70,11 @@ function Comment(props) {
           onClick={writeComment}
           className="btn btn-outline-secondary"
           id="button-addon2">
-          {preCmt != undefined ? "댓글수정" : commentId != undefined ? "답글작성" : "댓글작성"}
+          {preCmt != undefined
+            ? '댓글수정'
+            : commentId != undefined
+            ? '답글작성'
+            : '댓글작성'}
         </button>
       </div>
     </div>

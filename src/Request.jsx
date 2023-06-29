@@ -1,6 +1,21 @@
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;
-const Request = axios;
+
+function Request(reqData, excute) {
+  const req = {
+    get: axios.get,
+    post: axios.post,
+    put: axios.put,
+    delete: axios.delete,
+  };
+
+  req[reqData.method](
+    `http://localhost:8080/api/${reqData.query}`,
+    reqData?.body
+  ).then((res) => {
+    excute(res);
+  });
+}
 
 export default Request;

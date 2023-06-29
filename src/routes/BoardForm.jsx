@@ -22,7 +22,13 @@ function BoardForm(props) {
       if (isUpdate) {
         delete req.userId;
         req.boardId = board.boardId;
-        Request.put(`http://localhost:8080/api/board/modify`, req).then(
+
+        Request(
+          {
+            method: 'put',
+            query: 'board/modify',
+            body: req,
+          },
           (res) => {
             if (res.data.error == null) {
               nav(-1);
@@ -32,7 +38,12 @@ function BoardForm(props) {
           }
         );
       } else {
-        Request.post(`http://localhost:8080/api/board/apply`, req).then(
+        Request(
+          {
+            method: 'post',
+            query: 'board/apply',
+            body: req,
+          },
           (res) => {
             if (res.data.error == null) {
               nav(-1);
