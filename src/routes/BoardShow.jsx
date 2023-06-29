@@ -44,7 +44,7 @@ function BoardShow(props) {
       Request(
         {
           method: 'get',
-          query: `listByLike/${query}?page=${currentPage - 1}&size=10`,
+          query: `board/listByLike/${query}?page=${currentPage - 1}&size=10`,
         },
         (res) => {
           setBoardList(res.data.data.content);
@@ -58,7 +58,7 @@ function BoardShow(props) {
       Request(
         {
           method: 'get',
-          query: `list?page=${currentPage - 1}&size=10`,
+          query: `board/list?page=${currentPage - 1}&size=10`,
         },
         (res) => {
           setBoardList(res.data.data.content);

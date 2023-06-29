@@ -97,7 +97,7 @@ function Profile(props) {
           ) : pMode == 'cmt' ? (
             <CmtList userId={userId} />
           ) : (
-            pMode == 'gboard' && <Gboard />
+            pMode == 'gboard' && <Gboard userId={userId} />
           )}
         </div>
       </div>

@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import GmtList from './GmtList';
+import UserContext from '../context/UserContext';
+import GboardWriter from './GboardWriter';
 
 function Gboard(props) {
+  const { userData } = useContext(UserContext);
+
   return (
-    <div>
-      <h1>Gboard!</h1>
-    </div>
+    <>
+      {userData != null && <GboardWriter target={props.userId} />}
+      <GmtList target={props.userId} />
+    </>
   );
 }
 
